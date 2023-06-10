@@ -1,0 +1,1 @@
+boot.o: boot.S

@@ -1,0 +1,6 @@
+=== 
+p_enemy.c:411 (commented out)
+p_enemy.c:362 (commented out)
+p_enemy.c:839 (commented out, it was for doom 2 so like...)
+
+p_enemy(368,1962,1969,1985,1995,1989) (comment out)
