@@ -1,6 +1,7 @@
 #ifndef HD_C
 #define HD_C
-
+#include "../../libc/include/stdlib.h"
+#include "../../libc/include/string.h"
 /*
 *	Hard drive controller for DoomOS
 * or any other os that uses it i guess
@@ -285,7 +286,13 @@ void ide_init(unsigned int BAR0, unsigned int BAR1, unsigned int BAR2, unsigned 
 
 	for (int i = 0; i < 4; i++) {
 		if (ide_devs[i].reserv == 1) {
-			t_out((char*)ide_devs[i].model);
+			// convert i
+			char iStr[2];
+			itoa(i, iStr, 2, 10);
+			char full[100] = "Drive on: ";
+			strcat(full, iStr);
+			t_out(full);
+			//t_out((char*)ide_devs[i].model);
 		}
 	}
 	t_out("IDE Driver initilized.");

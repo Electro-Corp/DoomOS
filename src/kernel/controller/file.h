@@ -23,6 +23,37 @@ typedef struct{
 }FILE;
 
 
+
+/*
+* Epic rambling 
+* 
+* so like the boot cd is ISO 9660
+* so we need to like
+* like like load the fs lamo lil c0akfd0 fl
+* 
+* is that enough likes?
+*/
+
+// Path Table Entry
+typedef struct {
+	int dirIndentifierLen, extAttrRecordLen,
+		locationOfExtent, dirNumOfPDir;
+	char directoryIdentifier[256];
+
+} PathTableEntry ;
+
+
+static void* mountBootDrive() {
+	// lets call some not-finished functions!
+	unsigned char bytes[4];
+	// unsigned char[] readFromDisk(int offset, int bytes);
+	bytes = readFromDisk(140, 4);
+	uint32_t = bytes[0] | (bytes[1] << 8) | (bytes[2] << 16) | (bytes[3] << 24); // convert to number
+}
+
+
+
+
 /*
 * struct stat {
     dev_t     st_dev;     ID of device containing file

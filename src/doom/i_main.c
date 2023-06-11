@@ -50,8 +50,6 @@ int main(int argc, char** argv )
 } 
 */
 
-static void Launchmain() {
-    t_out("Starting main Doom Loop");
-    //return;
+void Launchmain() {
     D_DoomMain();
 }

@@ -21,6 +21,29 @@ void t_init() {
 	}
 }
 
+void t_scroll() {
+	for (int y = 1; y < VGA_H; y++) {
+		for (int x = 0; x < VGA_W; x++) {
+			videoMem[2 * x + 160 * (y - 1)] = videoMem[2 * x + 160 * y];
+			videoMem[(2 * x + 160 * (y - 1)) + 1] = videoMem[(2 * x + 160 * y) + 1];
+		}
+	}
+
+	for (int x = 0; x < VGA_W; x++) {
+		t_putAt(' ', x, VGA_H - 1);
+	}
+	trow = VGA_H;
+}
+
+void t_delLastLine() {
+	int x, *ptr;
+	for (x = 0; x < VGA_W * 2; x++) {
+		ptr = 0xB8000 + (VGA_W * 2) * (VGA_H - 1) + x;
+		*ptr = 0;
+	}
+}
+
+
 void t_putAt(unsigned char c, int x, int y) {
 	videoMem[2 * x + 160 * y] = c;
 	videoMem[(2 * x + 160 * y) + 1] = 0xC;
@@ -31,6 +54,7 @@ void t_out(char* data) {
 		t_putAt(data[i], tcol++, trow);
 	}
 	trow++;
+	if (trow > VGA_H) t_scroll();
 	tcol = 0;
 }
 #endif

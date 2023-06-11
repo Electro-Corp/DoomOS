@@ -42,7 +42,7 @@ static int lastmousex = 0, lastmousey = 0;
 */
 void I_InitGraphics(void) {
     // init sdl window
-
+    t_out("I_InitGraphics: Init Graphics...");
 }
 void I_ReadScreen(byte* src) {
     memcpy(src, screens[0], SCREENWIDTH * SCREENHEIGHT);

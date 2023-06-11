@@ -11,7 +11,7 @@
 #ifndef STRING_H
 #define STRING_H
 //#include "ctype.h"
-
+#include "stdlib.h"
 
 
 static int strlen(char* string) {
@@ -21,9 +21,7 @@ static int strlen(char* string) {
 }
 
 static char* strcpy(char* dest, char* src) {
-	for (int i = 0; i < strlen(src); i++) {
-		*(dest + i) = *(src + i);
-	}
+	memcpy(dest, src, strlen(src) + 1);
 	return dest;
 }
 
@@ -60,9 +58,10 @@ static int strncmp(const char* str1, const char* str2, int num) {
 }
 
 static char* strcat(char* dest, const char* src) {
-	for (int i = strlen(dest); src[i - strlen(dest)] != '\0'; i++) {
-		dest[i] = src[i];
+	for (int i = 0; i < strlen(src); i++) {
+		dest[i + (strlen(dest) - 1)] = src[i];
 	}
+	dest[strlen(dest) + 1] = '\0';
 	return dest;
 }
 

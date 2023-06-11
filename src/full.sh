@@ -91,13 +91,15 @@ i686-elf-gcc -w -c doom/z_zone.c -o obj/doom/z_zone.o -ffreestanding -Wall -Wext
 i686-elf-gcc -w -c kernel/boot.S -o obj/boot.o 
 i686-elf-gcc -w -c kernel/disp/tty.c -o obj/tty.o -ffreestanding -Wall -Wextra -nostdinc -fno-builtin -I../libc/include
 i686-elf-gcc -w -c kernel/controller/hd.c -o obj/hd.o -ffreestanding -Wall -Wextra -nostdinc -fno-builtin -I../libc/include
+i686-elf-gcc -w -c kernel/memory/memory.c -o obj/memory.o -ffreestanding -Wall -Wextra -nostdinc -fno-builtin -I../libc/include
+
 i686-elf-gcc -w -c kernel/kernel.c -o obj/kernel.o -ffreestanding -Wall -Wextra -nostdinc -fno-builtin -I../libc/include
 
 
 
 
 # link -Ttext 0x0
-ld -T kernel/linker.ld -melf_i386 obj/boot.o obj/kernel.o obj/doom/*.o -o boot/kernel 
+ld -T kernel/linker.ld -melf_i386 obj/boot.o obj/hd.o obj/memory.o obj/kernel.o  obj/doom/*.o -o boot/kernel 
 
 mkdir -p isodir
 mkdir -p isodir/boot
