@@ -114,4 +114,4 @@ menuentry "DoomOS" {
 }
 EOF
 grub-mkrescue -o doomos.iso isodir
-qemu-system-x86_64 -cdrom doomos.iso
+qemu-system-x86_64 -drive file=doomos.iso,if=ide,media=cdrom

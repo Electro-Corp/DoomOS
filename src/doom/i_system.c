@@ -181,5 +181,8 @@ void I_Error (char *error, ...)
     D_QuitNetGame ();
     I_ShutdownGraphics();
     
+    t_out(error);
+    asm("hlt");
+
     exit(-1);
 }

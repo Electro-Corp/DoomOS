@@ -4,6 +4,10 @@
 */
 #ifndef FILE_H
 #define FILE_H
+// includes
+#include "../../libc/include/stdlib.h"
+#include "../../libc/include/string.h"
+#include "../../libc/include/stdio.h"
 
 
 #define SEEK_END 0 
@@ -43,12 +47,65 @@ typedef struct {
 } PathTableEntry ;
 
 
+static char* reverse(int num) {
+	char full[100];
+	int c[100], i = 0;
+	while (num > 0) {
+		c[i++] = num % 10;
+		num /= 10;
+	}
+	for (int v = 0; i > 0; i--) {
+		itoa(c[i], full[v++], 1, 10); // i am going insane
+	}
+	return full;
+}
+
+/*
+* Read from the Disk and 
+* init the ISO 9660 FS
+*/
+
 static void* mountBootDrive() {
-	// lets call some not-finished functions!
-	unsigned char bytes[4];
-	// unsigned char[] readFromDisk(int offset, int bytes);
-	bytes = readFromDisk(140, 4);
-	uint32_t = bytes[0] | (bytes[1] << 8) | (bytes[2] << 16) | (bytes[3] << 24); // convert to number
+	// Read volume descriptor 
+	uint16_t volumeDesc[2048];
+	//
+	
+	int c = read_cdrom(0x1F0, 0, 16, 1, &volumeDesc);
+	//int c = read_cdrom(0x1F0, 0, 0, 1, &vDTC);
+	if (c < 0 || c > 0) {
+		t_out("The CD-ROM Read operation failed in some way. Doom will not work!");
+	}
+	else {
+		unsigned char* tmp = &volumeDesc[0];
+		if (*tmp = 1) {
+			t_out("Primary Volume Descriptor found. Loading..");
+		}
+
+		
+		/*
+		int size;
+		size += volumeDesc[132] | (volumeDesc[133] << 8) | (volumeDesc[134] << 16) | (volumeDesc[135] << 24);
+		size = 420;
+
+		uint32_t lbaLoc;
+		lbaLoc += volumeDesc[140] | (volumeDesc[141] << 8) | (volumeDesc[142] << 16) | (volumeDesc[142] << 24);
+		char* f = reverse(size);
+		char debugFull[512] = "Path table size: ";
+		strcat(debugFull, f);
+		t_out(debugFull);
+
+		// what ever, move on
+		uint16_t pathTableSys[size];
+		int c = read_cdrom(0x1F0, 0, lbaLoc, size / 2000, &pathTableSys);
+		if (c < 0 || c > 0) {
+			// panic!
+		}
+		*/
+		// load entries
+
+	}
+	
+
 }
 
 
@@ -72,29 +129,69 @@ static void* mountBootDrive() {
 };
 */
 
+// internal fs
+
+typedef struct {
+	// i could put all of the same 
+	// data types on the same line
+	// but i want this to be readable
+	uint8_t len; //  Length of Directory Record. 
+	uint8_t extAttrLen; //  Extended Attribute Record length. 
+	uint16_t locOfExt; // Location of extent (LBA) in both-endian format. ( we only use little endian )
+	uint16_t dataLen; //  Data length (size of extent) in both-endian format.  ( we only use little endian )
+	// time, but we dont care about that
+	// file flags ( we dont care )
+	uint8_t unitFileSizeInter; // File unit size for files recorded in interleaved mode, zero otherwise. 
+	uint8_t fileGapSizeInter; //  Interleave gap size for files recorded in interleaved mode, zero otherwise. 
+	// best part
+	uint8_t nameLen;
+} dirEntry;
+
+static void* readFile(const char* file) {
+#define ROOTOFFSET 156
+	// load PVD
+	uint16_t pvd[2048];
+	int c = read_cdrom(0x1F0, 0, 16, 1, &pvd);
+	// get root directory
+
+	dirEntry root;
+	// read name
+	/*char dirName[pvd[ROOTOFFSET + 32]];
+	for (int i = 0; i < pvd[ROOTOFFSET + 32] || pvd[ROOTOFFSET + 33 + i] == ';'; i++) {
+		dirName[i] = pvd[ROOTOFFSET + 33 + i];
+	}
+	t_out(dirName);*/
+}
+
+
+
 typedef struct stat {
 	int st_size;
 }fileinfo;
 
 static FILE* fopen(char* fileName, char* mode) {
 	FILE* tmp;
-	return tmp;
+	
+	// Load file from system
+	
+
+	return (void*)0;
 }
 
 static int fseek(FILE* stream, long int offset, int whence) {
-	return -1;
+	return 1;
 }
 static long int ftell(FILE* stream) {
 	return stream->pos;
 }
 static int fread(void* ptr, int size, int nmemb, FILE* stream) {
-	return -1;
+	return 1;
 }
 static int fclose(FILE* stream) {
-	return -1;
+	return 1;
 }
 static int fprintf(FILE* stream, char* text, ...) {
-	return -1;
+	return 1;
 }
 static int fscanf(FILE* stream, const char* format, ...) {
 
@@ -103,34 +200,39 @@ static int fscanf(FILE* stream, const char* format, ...) {
 * FS functions
 */
 static int access(const char* pathname, int mode) {
-	return -1;
+	return 1;
 }
 static int mkdir(const char* path, int mode) {
-	return -1;
+	return 1;
 }
+
+// important functions
+
 static int FS_open(const char* path, ...) {
+	t_out("FS_Open called");
+	readFile(path);
 	return -1; // replace with handle
 }
 static int FS_close(int handle) {
-	return -1; // remove handle
+	return 1; // remove handle
 }
 static int read(int handle, void* buf, int count) {
-	return -1;
+	return 1;
 }
 static int write(int handle, void* buf, int count) {
-	return -1;
+	return 1;
 }
 
 typedef long int off_t;
 static off_t lseek(int handle, off_t offset, int whence) {
-	return -1;
+	return 1;
 }
 
 
 static int fstat(int fd, struct fileinfo* buf) {
-	return -1;
+	return 1;
 }
 static int feof(FILE* stream) {
-	return -1;
+	return 1;
 }
 #endif

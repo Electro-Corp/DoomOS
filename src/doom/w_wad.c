@@ -181,7 +181,7 @@ void W_AddFile (char *filename)
     if ( (handle = FS_open (filename,O_RDONLY | O_BINARY)) == -1)
     {
 	//printf (" couldn't open %s\n",filename);
-        t_out("Could not open WAD file.");
+        I_Error("Could not open WAD file.");
 	return;
     }
     t_out("Adding wad file.");
@@ -225,8 +225,8 @@ void W_AddFile (char *filename)
     // Fill in lumpinfo
     lumpinfo = realloc (lumpinfo, numlumps*sizeof(lumpinfo_t));
 
-    if (!lumpinfo)
-	I_Error ("Couldn't realloc lumpinfo");
+   // if (!lumpinfo)
+//	I_Error ("Couldn't realloc lumpinfo");
 
     lump_p = &lumpinfo[startlump];
 	
@@ -316,7 +316,7 @@ void W_InitMultipleFiles (char** filenames)
     numlumps = 0;
 
     // will be realloced as lumps are added
-    lumpinfo = malloc(1);	
+    //lumpinfo = malloc(1);	
 
     for ( ; *filenames ; filenames++)
 	W_AddFile (*filenames);
@@ -347,7 +347,8 @@ void W_InitFile (char* filename)
 
     names[0] = filename;
     names[1] = NULL;
-    W_InitMultipleFiles (names);
+    W_AddFile(filename);
+    //W_InitMultipleFiles (names);
 }
 
 

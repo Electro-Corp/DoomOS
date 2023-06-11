@@ -1,4 +1,5 @@
 #include "disp/tty.c"
+#include "controller/file.h"
 void main() {
 	t_init();
 	// print out terminal stuff before we launch doom
@@ -13,8 +14,7 @@ void main() {
 	t_out("         Doom Os");
 	t_out("          V0.1");
 	t_out("=======================");
-	t_out("Initlizing IDE Driver...");
-	ide_init(0x1F0, 0x3F6, 0x170, 0x376, 0x000);
+	mountBootDrive();
 	//t_out("Init FS, Test read WAD From boot medium...");
 	//t_out("Test results: [not finished] ");
 	t_out("DoomOS: Init complete.");

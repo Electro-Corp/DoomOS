@@ -1008,7 +1008,7 @@ void D_DoomMain (void)
     Z_Init ();
 
 	t_out("W_Init: Init WADfiles.");
-    W_InitMultipleFiles (wadfiles);
+    /*W_InitMultipleFiles*/ W_InitFile("boot/doom.wad");
     
 
     // Check for -file in shareware

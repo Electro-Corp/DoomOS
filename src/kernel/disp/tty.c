@@ -57,4 +57,19 @@ void t_out(char* data) {
 	if (trow > VGA_H) t_scroll();
 	tcol = 0;
 }
+
+
+// debug
+void t_debug(char* data) {
+#ifdef DEBUG
+	t_out(data);
+#endif
+}
+
+void t_sameline(char* data) {
+	for (int i = 0; i < strlen(data); i++) {
+		t_putAt(data[i], tcol++, trow);
+	}
+	tcol = 0;
+}
 #endif
