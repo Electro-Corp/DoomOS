@@ -11,6 +11,7 @@
 .long MAGIC
 .long FLAGS
 .long CHECKSUM
+.long 0x36d76289
 
 .section .bss
 .align 16
@@ -23,6 +24,9 @@ stack_top:
 .type _start, @function
 _start:
 	movl $stack_top, %esp
+
+	pushl %ebx
+	pushl   %eax
 	call main
 	cli
 1:

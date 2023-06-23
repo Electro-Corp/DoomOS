@@ -106,11 +106,15 @@ mkdir -p isodir/boot
 mkdir -p isodir/boot/grub
 # module doom.wad
 cp boot/kernel isodir/boot/kernel
-cp doom.wad isodir/boot/doom.wad
+cp doom.wad isodir
+cp bg.png isodir/boot
 cat > isodir/boot/grub/grub.cfg << EOF
+background_image /boot/bg.png
+set color_normal=white/black
+set color_highlight=black/white
 menuentry "DoomOS" {
-	
 	multiboot /boot/kernel
+	module2 raw file=doom.wad
 }
 EOF
 grub-mkrescue -o doomos.iso isodir

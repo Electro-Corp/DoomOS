@@ -49,13 +49,10 @@ typedef struct {
 
 static char* reverse(int num) {
 	char full[100];
-	int c[100], i = 0;
+	int i = 0;
 	while (num > 0) {
-		c[i++] = num % 10;
+		itoa(num % 10, full[i++], 1, 10);
 		num /= 10;
-	}
-	for (int v = 0; i > 0; i--) {
-		itoa(c[i], full[v++], 1, 10); // i am going insane
 	}
 	return full;
 }
@@ -148,18 +145,30 @@ typedef struct {
 } dirEntry;
 
 static void* readFile(const char* file) {
-#define ROOTOFFSET 156
+/*#define ROOTOFFSET 156
 	// load PVD
 	uint16_t pvd[2048];
 	int c = read_cdrom(0x1F0, 0, 16, 1, &pvd);
-	// get root directory
-
+	// get root directorywd
 	dirEntry root;
-	// read name
-	/*char dirName[pvd[ROOTOFFSET + 32]];
-	for (int i = 0; i < pvd[ROOTOFFSET + 32] || pvd[ROOTOFFSET + 33 + i] == ';'; i++) {
-		dirName[i] = pvd[ROOTOFFSET + 33 + i];
+	uint32_t rootLBA, rootExtentLength;
+	rootLBA = (pvd[ROOTOFFSET + 2] & 0xFF) | ((pvd[ROOTOFFSET + 3] >> 8) & 0xFF) | ((pvd[ROOTOFFSET + 4] >> 16) & 0xFF) | ((pvd[ROOTOFFSET + 5] >> 24) & 0xFF);
+	/*rootLBA |= pvd[ROOTOFFSET + 2] & 0xff;
+	rootLBA |= (pvd[ROOTOFFSET + 3] << 8) & 0xFF;
+	rootLBA |= (pvd[ROOTOFFSET + 4] << 16) & 0xFF;
+	rootLBA |= (pvd[ROOTOFFSET + 5] << 24) & 0xFF;
+	
+	
+
+	//rootExtentLength += pvd[ROOTOFFSET + 10] | (pvd[ROOTOFFSET + 11] << 8) | (pvd[ROOTOFFSET + 12] << 16) | (pvd[ROOTOFFSET + 13] << 24);
+	// load
+	uint16_t dirEntData[2048];
+	c = read_cdrom(0x1F0, 0, rootLBA, 1, &dirEntData);
+	char dirName[dirEntData[32]];
+	for (int i = 0; i < dirEntData[32]; i++) {
+		dirName[i] = dirEntData[33 + i];
 	}
+	//t_out(dNum);
 	t_out(dirName);*/
 }
 
@@ -210,7 +219,8 @@ static int mkdir(const char* path, int mode) {
 
 static int FS_open(const char* path, ...) {
 	t_out("FS_Open called");
-	readFile(path);
+	t_out(path);
+	
 	return -1; // replace with handle
 }
 static int FS_close(int handle) {
