@@ -1,0 +1,6 @@
+default 0
+ 
+ 
+title DoomOS
+kernel /boot/kernel
+module doom.wad

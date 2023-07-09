@@ -40,8 +40,57 @@ static int printf(char* str, ...) {
 
 /*
 * memory (very sad)
-* this will be handled in the future
 */
+
+// When the kernel is given control, we find the size and location of memory 
+
+typedef struct {
+	uint32_t addr_low, addr_high, length_low, length_high, size;
+	int type;
+} MEMORYLOC;
+
+static MEMORYLOC memorylocs[15];
+static int memPts = 0;
+
+static void addMemoryLocation(MEMORYLOC location) {
+	memorylocs[memPts++] = location;
+}
+
+// allocate the memory
+
+
+typedef struct {
+#define MEMORY_FREE 0
+	int used;
+
+	int adderess, size;
+
+	struct MEM_BLOCK* next;
+} MEM_BLOCK;
+
+static MEM_BLOCK blocs[256];
+static int blocloc = 0;
+
+static void processMemoryMap() {
+	for (int i = 0; i < memPts; i++) {
+		uint64_t size = memorylocs[i].length_high << 32 | memorylocs[i].length_low;
+		uint64_t loc = memorylocs[i].addr_high << 32 | memorylocs[i].addr_low;
+		int constant = 10; // some random constant
+
+		uint64_t offset = 0;
+		for (int j = 0; i < size / constant; i++) {
+			MEM_BLOCK tmp = { MEMORY_FREE, loc + offset, size / constant, 0};
+			offset += loc + offset;
+			if (blocloc > 0) {
+				// We're not the first block, so we can set the last one to point to us
+				blocs[blocloc - 1].next = &tmp;
+				blocs[blocloc - 1].adderess = loc + offset;
+			}
+			blocs[blocloc++] = tmp;
+		}
+	}
+	
+}
 
 static void* malloc(int size) {
 	unsigned char* g;

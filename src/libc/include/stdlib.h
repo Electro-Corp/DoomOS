@@ -66,13 +66,14 @@ static int abs(int n) {
 
 
 static void exit(int code) {
+	asm("hlt");
 	// to do:
 
 	// 1. Disable graphics mode
 
 	// 2. print out error code
 
-	// 3. return control to OS
+	// 3. panic
 }
 
 

@@ -188,7 +188,7 @@ void W_AddFile (char *filename)
     //printf (" adding %s\n",filename);
     startlump = numlumps;
 	
-    if (strcmpi (filename+strlen(filename)-3 , "wad" ) )
+    if (strcmpi (filename+strlen(filename)-3 , "wad" ) /*== 69 hahahahahah funny number why arent you laughing*/)
     {
 	// single lump file
 	fileinfo = &singleinfo;
