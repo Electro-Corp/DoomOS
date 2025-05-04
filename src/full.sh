@@ -10,7 +10,7 @@
 i686-elf-gcc -w -c doom/am_map.c -o obj/doom/am_map.o -ffreestanding -Wall -Wextra -nostdinc -fno-builtin -I../libc/include
 # D
 i686-elf-gcc -w -c doom/d_items.c -o obj/doom/d_items.o -ffreestanding -Wall -Wextra -nostdinc -fno-builtin -I../libc/include
-i686-elf-gcc -w -c doom/d_event.c -o obj/doom/d_event.o -ffreestanding -Wall -Wextra -nostdinc -fno-builtin -I../libc/include
+# i686-elf-gcc -w -c doom/d_event.c -o obj/doom/d_event.o -ffreestanding -Wall -Wextra -nostdinc -fno-builtin -I../libc/include
 i686-elf-gcc -w -c doom/d_net.c -o obj/doom/d_net.o -ffreestanding -Wall -Wextra -nostdinc -fno-builtin -I../libc/include
 i686-elf-gcc -w -c doom/doomdef.c -o obj/doom/doomdef.o -ffreestanding -Wall -Wextra -nostdinc -fno-builtin -I../libc/include
 i686-elf-gcc -w -c doom/dstrings.c -o obj/doom/dstrings.o -ffreestanding -Wall -Wextra -nostdinc -fno-builtin -I../libc/include
@@ -89,8 +89,9 @@ i686-elf-gcc -w -c doom/z_zone.c -o obj/doom/z_zone.o -ffreestanding -Wall -Wext
 
 # compile core os
 i686-elf-gcc -w -c kernel/boot.S -o obj/boot.o 
-i686-elf-gcc -w -c kernel/disp/tty.c -o obj/tty.o -ffreestanding -Wall -Wextra -nostdinc -fno-builtin -I../libc/include
+i686-elf-gcc -w -c kernel/disp/vga.c -o obj/vga.o -ffreestanding -Wall -Wextra -nostdinc -fno-builtin -I../libc/include
 i686-elf-gcc -w -c kernel/controller/hd.c -o obj/hd.o -ffreestanding -Wall -Wextra -nostdinc -fno-builtin -I../libc/include
+i686-elf-gcc -w -c kernel/controller/file.c -o obj/file.o -ffreestanding -Wall -Wextra -nostdinc -fno-builtin -I../libc/include
 i686-elf-gcc -w -c kernel/memory/memory.c -o obj/memory.o -ffreestanding -Wall -Wextra -nostdinc -fno-builtin -I../libc/include
 
 i686-elf-gcc -w -c kernel/kernel.c -o obj/kernel.o -ffreestanding -Wall -Wextra -nostdinc -fno-builtin -I../libc/include
@@ -99,7 +100,8 @@ i686-elf-gcc -w -c kernel/kernel.c -o obj/kernel.o -ffreestanding -Wall -Wextra 
 
 
 # link -Ttext 0x0
-ld -T kernel/linker.ld -melf_i386 obj/boot.o obj/hd.o obj/memory.o obj/kernel.o  obj/doom/*.o -o boot/kernel 
+#ld -T kernel/linker.ld -melf_i386 obj/boot.o obj/vga.o obj/hd.o obj/file.o obj/memory.o obj/kernel.o  obj/doom/*.o -o boot/kernel 
+ld -T kernel/linker.ld -melf_i386 obj/boot.o obj/vga.o obj/hd.o obj/file.o obj/memory.o obj/kernel.o  obj/doom/*.o -o boot/kernel 
 
 mkdir -p isodir
 mkdir -p isodir/boot

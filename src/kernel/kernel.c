@@ -1,25 +1,18 @@
-#include "disp/tty.c"
+#include "disp/vga.h"
 #include "controller/file.h"
 #include "multiboot.h"
 void main(multiboot_info_t* mbd) {
-	t_init();
+	initTerminal();
 	// print out terminal stuff before we launch doom
 	t_out("=======================");
-	/*t_out("______           ___  ________ _____ ");
-	t_out("|  _  \          |  \/  |  _  /  ___|");
-	t_out("| | | |___   ___ | .  . | | | \ `--.");
-	t_out("| | | / _ \ / _ \| |\/| | | | |`--. \ ");
-	t_out("| |/ / (_) | (_) | |  | \ \_/ /\__/ /");
-	t_out("|___/ \___/ \___/\_|  |_/\___/\____/ ");*/
-
 	t_out("         Doom Os");
 	t_out("          V0.1");
 	t_out("=======================");
 
 
-	mountBootDrive();
+	initCDFS();
 
-	if (!(mbd->flags >> 6 & 0x1)) {
+	/*if (!(mbd->flags >> 6 & 0x1)) {
 		t_out("Fatal Error: Invalid Memory Map.");
 		asm("hlt");
 	}
@@ -38,7 +31,7 @@ void main(multiboot_info_t* mbd) {
 	itoa(blocloc, debug, 5, 10);
 	reverse(debug, 2);
 	strcat(debugFull, debug);
-	t_out(debugFull);
+	t_out(debugFull);*/
 	//
 	t_out("DoomOS: Init complete.");
 	t_out("DoomOS: Launching Doom...");
