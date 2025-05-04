@@ -10,29 +10,28 @@ CD_DirectoryEntry d_entries[256];
 int cDirE = 0; // current index of directory index being loaded
 
 void initFS(){
-    kprintf("[KFS] Initilizing FS");
-    kprintf("[KFS] Retriving number of drives");
+    kprintf("[DOOMFS] Initilizing FS");
+    kprintf("[DOOMFS] Retriving number of drives");
     i_hdds = *hard_disks_ptr;
 
     switch(i_hdds){
         case 0:
-            kprintf("[KFS] No disks installed");
-            kprintf("[KFS] No HDD installed, installation to disk is disabled.");
+            kprintf("[DOOMFS] No disks installed");
             break;
         case 1:
-            kprintf("[KFS] 1 disk installed");
+            kprintf("[DOOMFS] 1 disk installed");
             break;
         case 2:
-            kprintf("[KFS] 2 disks installed");
+            kprintf("[DOOMFS] 2 disks installed");
             break;
         case 3:
-            kprintf("[KFS] 3 disks installed");
+            kprintf("[DOOMFS] 3 disks installed");
             break;
         case 4:
-            kprintf("[KFS] 4 disks installed");
+            kprintf("[DOOMFS] 4 disks installed");
             break;
         default:
-            kprintf("[KFS] 4+ disks installed");
+            kprintf("[DOOMFS] 4+ disks installed");
             break;
     }
     
@@ -50,10 +49,10 @@ uint32_t little_endian_to_uint32(uint8_t* bytes) {
 }
 
 void initCDFS(){
-    kprintf("[KFS] Init root FS from CD-ROM Drive");
+    kprintf("[DOOMFS] Init root FS from CD-ROM Drive");
     uint8_t pvd[2048];
 	  int c = read_cdrom(0x1F0, 0, 16, 1, &pvd);
-    kprintf("[KFS] Read PVD");
+    kprintf("[DOOMFS] Read PVD");
     // Read drive label
     int labelOffset = 40; // Starts at offset 40, size of 32
     for(int i = labelOffset; i < labelOffset + 31; i++){
@@ -86,7 +85,7 @@ void initCDFS(){
 
     kprintf("================================");
     char listText[512];
-    strcat(listText, "[KFS] Directory listing for ");
+    strcat(listText, "[DOOMFS] Directory listing for ");
     strcat(listText, rootMedia.CD_volID);
     kprintf(listText);
     readDirectory(data, "/");    
@@ -201,6 +200,7 @@ CD_DirectoryEntry* getDirs(){
 /*
     UNIX-like file system stuff
 */
+/*
 static FILE* fopen(char* fileName, char* mode) {
 	FILE* tmp;
 	return (void*)0;
@@ -222,11 +222,12 @@ static int fprintf(FILE* stream, char* text, ...) {
 	return 1;
 }
 static int fscanf(FILE* stream, const char* format, ...) {
-
-}
+    return 1;
+}*/
 /*
 * FS functions
 */
+/*
 static int access(const char* pathname, int mode) {
 	return 1;
 }
@@ -244,7 +245,7 @@ static int FS_close(int handle) {
 	return 1; // remove handle 
 }
 static int read(int handle, void* buf, int count) {
-	
+	return 1;
 }
 static int write(int handle, void* buf, int count) {
 	return 1;
@@ -260,3 +261,4 @@ static int fstat(int fd, fileinfo* buf){
 static int feof(FILE* stream) {
 	return 1;
 }
+    */

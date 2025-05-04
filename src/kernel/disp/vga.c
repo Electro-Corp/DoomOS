@@ -43,7 +43,7 @@ void kprintf(char *string, ...){
       i+=1;
       continue;
     }
-    charAt(string[i], i, row, 0x7);
+    charAt(string[i], i, row, 0xC);
   }
   if(!rowDoNot)
     row++;

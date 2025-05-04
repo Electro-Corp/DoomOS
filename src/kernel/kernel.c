@@ -1,5 +1,4 @@
-#include "disp/vga.h"
-#include "controller/file.h"
+#include "controller/file_TMP.h"
 #include "multiboot.h"
 void main(multiboot_info_t* mbd) {
 	initTerminal();
@@ -10,7 +9,7 @@ void main(multiboot_info_t* mbd) {
 	t_out("=======================");
 
 
-	initCDFS();
+	initFS();
 
 	/*if (!(mbd->flags >> 6 & 0x1)) {
 		t_out("Fatal Error: Invalid Memory Map.");

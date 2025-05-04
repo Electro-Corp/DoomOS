@@ -1,6 +1,6 @@
-default 0
- 
- 
+default=0
+timeout=0
+  
 title DoomOS
+set gfxpayload=480x360x32
 kernel /boot/kernel
-module doom.wad

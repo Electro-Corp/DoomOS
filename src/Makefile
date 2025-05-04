@@ -1,62 +1,81 @@
-#
-# Makefile for DOOMOS
-#
+# Tools
+CC=i686-elf-gcc
+CFLAGS=-w -ffreestanding -Wall -Wextra -nostdinc -fno-builtin -I../libc/include
+ASFLAGS=-w
+LD=ld
+LDFLAGS=-T kernel/linker.ld -melf_i386
 
-DESTDIR?=
-PREFIX?=/usr/local
-EXEC_PREFIX?=$(PREFIX)
-BOOTDIR?=$(EXEC_PREFIX)/boot
-INCLUDEDIR?=$(PREFIX)/include
+# Paths
+OBJS=obj
+DOOM_OBJS=$(patsubst doom/%.c,$(OBJS)/doom/%.o,$(wildcard doom/*.c))
+KERNEL_OBJS=$(OBJS)/boot.o $(OBJS)/vga.o $(OBJS)/cd.o $(OBJS)/file.o $(OBJS)/memory.o $(OBJS)/kernel.o
+ALL_OBJS=$(KERNEL_OBJS) $(DOOM_OBJS)
 
-CFLAGS?=-O2 -g
-CPPFLAGS?=
-LDFLAGS?=
-LIBS?=
+# Output
+KERNEL_BIN=boot/kernel
+ISO=doomos.iso
 
-CC = i686-elf-gcc
+# Main target
+all: $(ISO)
 
-CFLAGS:=$(CFLAGS) -ffreestanding -Wall -Wextra
-LDFLAGS:=$(LDFLAGS)
-LIBS:=$(LIBS) -nostdlib -lgcc
+# Compile Doom sources
+$(OBJS)/doom/%.o: doom/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-include kernel/make.config
+# Compile kernel parts
+$(OBJS)/boot.o: kernel/boot.S
+	@mkdir -p $(dir $@)
+	$(CC) $(ASFLAGS) -c $< -o $@
 
-CFLAGS:=$(CFLAGS) $(KERNEL_ARCH_CFLAGS)
-CPPFLAGS:=$(CPPFLAGS) $(KERNEL_ARCH_CPPFLAGS)
-LDFLAGS:=$(LDFLAGS) $(KERNEL_ARCH_LDFLAGS)
-LIBS:=$(LIBS) $(KERNEL_ARCH_LIBS)
+$(OBJS)/%.o: kernel/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-KERNEL_OBJS=\
-$(KERNEL_ARCH_OBJS) \
-kernel/kernel.o \
+$(OBJS)/vga.o: kernel/disp/vga.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-OBS=\
-$(KERNEL_OBJS) \
+$(OBJS)/cd.o: kernel/controller/cd.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-LINK_LIST=\
-$(KERNEL_OBJS) \
-$(LIBS)
+$(OBJS)/file.o: kernel/controller/file.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-.PHONY: all clean install install-headers install-kernel
-.SUFFIXES: .o .c .S
+$(OBJS)/memory.o: kernel/memory/memory.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
 
+$(OBJS)/kernel.o: kernel/kernel.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
 
+# Link the kernel
+$(KERNEL_BIN): $(ALL_OBJS)
+	@mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) $(ALL_OBJS) -o $@
 
-all: doomos.kernel
+# ISO creation
+$(ISO): $(KERNEL_BIN)
+	@mkdir -p isodir/boot/grub
+	cp $(KERNEL_BIN) isodir/boot/kernel
+	cp boot/grub/* isodir/boot/grub/
+	cp doom.wad isodir/
+	cp bg.png isodir/boot/
+	echo 'background_image /boot/bg.png' > isodir/boot/grub/grub.cfg
+	echo 'set color_normal=white/black' >> isodir/boot/grub/grub.cfg
+	echo 'set color_highlight=black/white' >> isodir/boot/grub/grub.cfg
+	echo 'menuentry "DoomOS" {' >> isodir/boot/grub/grub.cfg
+	echo '    multiboot /boot/kernel' >> isodir/boot/grub/grub.cfg
+	echo '}' >> isodir/boot/grub/grub.cfg
+	grub-mkrescue -o $(ISO) isodir
 
-doomos.kernel: $(OBJS) kernel/linker.ld
-	$(CC) -T kernel/linker.ld -o $@ $(CFLAGS) $(LINK_LIST)
-	grub-file --is-x86-multiboot doomos.kernel
+# Run in QEMU
+run: $(ISO)
+	qemu-system-x86_64 -drive file=$(ISO),if=ide,media=cdrom
 
-.c.o:
-	$(CC) -MD -c $< -o $@ -std=gnu11 $(CFLAGS) $(CPPFLAGS)
- 
-.S.o:
-	$(CC) -MD -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
- 
+# Clean
 clean:
-	rm -f myos.kernel
-	rm -f $(OBJS) *.o */*.o */*/*.o
-	rm -f $(OBJS:.o=.d) *.d */*.d */*/*.d
-
--include $(OBJS:.o=.d)
+	rm -rf obj boot/kernel isodir $(ISO)

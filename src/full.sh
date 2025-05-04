@@ -90,7 +90,7 @@ i686-elf-gcc -w -c doom/z_zone.c -o obj/doom/z_zone.o -ffreestanding -Wall -Wext
 # compile core os
 i686-elf-gcc -w -c kernel/boot.S -o obj/boot.o 
 i686-elf-gcc -w -c kernel/disp/vga.c -o obj/vga.o -ffreestanding -Wall -Wextra -nostdinc -fno-builtin -I../libc/include
-i686-elf-gcc -w -c kernel/controller/hd.c -o obj/hd.o -ffreestanding -Wall -Wextra -nostdinc -fno-builtin -I../libc/include
+i686-elf-gcc -w -c kernel/controller/cd.c -o obj/cd.o -ffreestanding -Wall -Wextra -nostdinc -fno-builtin -I../libc/include
 i686-elf-gcc -w -c kernel/controller/file.c -o obj/file.o -ffreestanding -Wall -Wextra -nostdinc -fno-builtin -I../libc/include
 i686-elf-gcc -w -c kernel/memory/memory.c -o obj/memory.o -ffreestanding -Wall -Wextra -nostdinc -fno-builtin -I../libc/include
 
@@ -101,7 +101,9 @@ i686-elf-gcc -w -c kernel/kernel.c -o obj/kernel.o -ffreestanding -Wall -Wextra 
 
 # link -Ttext 0x0
 #ld -T kernel/linker.ld -melf_i386 obj/boot.o obj/vga.o obj/hd.o obj/file.o obj/memory.o obj/kernel.o  obj/doom/*.o -o boot/kernel 
-ld -T kernel/linker.ld -melf_i386 obj/boot.o obj/vga.o obj/hd.o obj/file.o obj/memory.o obj/kernel.o  obj/doom/*.o -o boot/kernel 
+ld -T kernel/linker.ld -melf_i386 obj/boot.o obj/vga.o obj/cd.o obj/file.o obj/memory.o obj/kernel.o obj/doom/*.o -o boot/kernel
+
+
 
 mkdir -p isodir
 mkdir -p isodir/boot
@@ -111,13 +113,25 @@ cp boot/kernel isodir/boot/kernel
 cp boot/grub/* isodir/boot/grub/
 cp doom.wad isodir
 cp bg.png isodir/boot
-cat > isodir/boot/grub/grub.cfg << EOF
-background_image /boot/bg.png
-set color_normal=white/black
-set color_highlight=black/white
-menuentry "DoomOS" {
-	multiboot /boot/kernel
-}
+#cat > isodir/boot/grub/grub.cfg << EOF
+#background_image /boot/bg.png
+#set color_normal=white/black
+#set color_highlight=black/white
+#menuentry "DoomOS" {
+#	multiboot /boot/kernel
+#}
 EOF
-grub-mkrescue -o doomos.iso isodir
+#grub-mkrescue -o doomos.iso isodir
+
+mkisofs -R                              \
+                -b  boot/grub/eltor    \
+                -no-emul-boot                   \
+                -boot-load-size 4               \
+                -A os                           \
+                -input-charset utf8             \
+                -quiet                          \
+                -boot-info-table                \
+                -o doomos.iso                       \
+                -V "DoomOS"                \
+                isodir
 qemu-system-x86_64 -drive file=doomos.iso,if=ide,media=cdrom
